@@ -4,8 +4,7 @@ on:
   push:
     branches:
       - E-Commerce_MainBranchCI_CD
-  workflow_dispatch:   # 👈 allows manual trigger from GitHub UI
-
+  workflow_dispatch:   # allows manual trigger from GitHub UI
 
 jobs:
   build-deploy:
@@ -23,32 +22,32 @@ jobs:
 
       # Run unit tests only for Cart_Order_Service, Product_Service, User_Service
       - name: Run Unit Tests - Cart_Order_Service
-        run: mvn -f CartAndOrderService/Cart_Order_Service/pom.xml clean test
+        run: mvn -f Microservices_Project/CartAndOrderService/Cart_Order_Service/pom.xml clean test
 
       - name: Run Unit Tests - Product_Service
-        run: mvn -f ProductService/Product_Service/pom.xml clean test
+        run: mvn -f Microservices_Project/ProductService/Product_Service/pom.xml clean test
 
       - name: Run Unit Tests - User_Service
-        run: mvn -f UserService/User_Service/pom.xml clean test
+        run: mvn -f Microservices_Project/UserService/User_Service/pom.xml clean test
 
       # Build JARs for all services
       - name: Build Cart_Order_Service JAR
-        run: mvn -f CartAndOrderService/Cart_Order_Service/pom.xml clean package -DskipTests
+        run: mvn -f Microservices_Project/CartAndOrderService/Cart_Order_Service/pom.xml clean package -DskipTests
 
       - name: Build E-Com_ApiGateWay JAR
-        run: mvn -f E-Com_ApiGateWay/pom.xml clean package -DskipTests
+        run: mvn -f Microservices_Project/E-Com_ApiGateWay/pom.xml clean package -DskipTests
 
       - name: Build Notification-Service JAR
-        run: mvn -f Notification-Service/pom.xml clean package -DskipTests
+        run: mvn -f Microservices_Project/Notification-Service/pom.xml clean package -DskipTests
 
       - name: Build Product_Service JAR
-        run: mvn -f ProductService/Product_Service/pom.xml clean package -DskipTests
+        run: mvn -f Microservices_Project/ProductService/Product_Service/pom.xml clean package -DskipTests
 
       - name: Build SpringCloud_EurekaServer JAR
-        run: mvn -f SpringCloud_EurekaServer/pom.xml clean package -DskipTests
+        run: mvn -f Microservices_Project/SpringCloud_EurekaServer/pom.xml clean package -DskipTests
 
       - name: Build SpringCloud_ConfigServer JAR
-        run: mvn -f SpringCloudConfigServer/SpringCloud_ConfigServer/pom.xml clean package -DskipTests
+        run: mvn -f Microservices_Project/SpringCloudConfigServer/SpringCloud_ConfigServer/pom.xml clean package -DskipTests
 
       - name: Build User_Service JAR
-        run: mvn -f UserService/User_Service/pom.xml clean package -DskipTests
+        run: mvn -f Microservices_Project/UserService/User_Service/pom.xml clean package -DskipTests
