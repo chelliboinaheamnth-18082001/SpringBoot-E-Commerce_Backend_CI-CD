@@ -20,15 +20,32 @@ jobs:
           java-version: '21'
           cache: 'maven'
 
-      # Run unit tests
+      # Run unit tests with JaCoCo coverage
       - name: Run Unit Tests - Cart_Order_Service
-        run: mvn -f Microservices_Project/CartAndOrderService/Cart_Order_Service/pom.xml clean test
-      - name: Run Unit Tests - Product_Service
-        run: mvn -f Microservices_Project/ProductService/Product_Service/pom.xml clean test
-      - name: Run Unit Tests - User_Service
-        run: mvn -f Microservices_Project/UserService/User_Service/pom.xml clean test
+        run: mvn -f Microservices_Project/CartAndOrderService/Cart_Order_Service/pom.xml clean test jacoco:report
+      - name: Upload Cart_Order_Service Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-cart-order-service
+          path: Microservices_Project/CartAndOrderService/Cart_Order_Service/target/site/jacoco/
 
-      # Build JARs
+      - name: Run Unit Tests - Product_Service
+        run: mvn -f Microservices_Project/ProductService/Product_Service/pom.xml clean test jacoco:report
+      - name: Upload Product_Service Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-product-service
+          path: Microservices_Project/ProductService/Product_Service/target/site/jacoco/
+
+      - name: Run Unit Tests - User_Service
+        run: mvn -f Microservices_Project/UserService/User_Service/pom.xml clean test jacoco:report
+      - name: Upload User_Service Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-user-service
+          path: Microservices_Project/UserService/User_Service/target/site/jacoco/
+
+      # Build JARs for all services
       - name: Build Cart_Order_Service JAR
         run: mvn -f Microservices_Project/CartAndOrderService/Cart_Order_Service/pom.xml clean package -DskipTests
       - name: Build E-Com_ApiGateWay JAR
@@ -51,24 +68,59 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Build & push Docker images
+      # Build & push Docker images with latest and commit SHA tags
       - name: Build & Push Cart_Order_Service
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/cart-order-service:latest Microservices_Project/CartAndOrderService/Cart_Order_Service && docker push ${{ secrets.DOCKER_USERNAME }}/cart-order-service:latest
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/cart-order-service:latest \
+                       -t ${{ secrets.DOCKER_USERNAME }}/cart-order-service:${{ github.sha }} \
+                       Microservices_Project/CartAndOrderService/Cart_Order_Service
+          docker push ${{ secrets.DOCKER_USERNAME }}/cart-order-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/cart-order-service:${{ github.sha }}
 
       - name: Build & Push ApiGateway
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest Microservices_Project/E-Com_ApiGateWay && docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest \
+                       -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.sha }} \
+                       Microservices_Project/E-Com_ApiGateWay
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.sha }}
 
       - name: Build & Push Notification-Service
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service:latest Microservices_Project/Notification-Service && docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:latest
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service:latest \
+                       -t ${{ secrets.DOCKER_USERNAME }}/notification-service:${{ github.sha }} \
+                       Microservices_Project/Notification-Service
+          docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:${{ github.sha }}
 
       - name: Build & Push Product_Service
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/product-service:latest Microservices_Project/ProductService/Product_Service && docker push ${{ secrets.DOCKER_USERNAME }}/product-service:latest
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/product-service:latest \
+                       -t ${{ secrets.DOCKER_USERNAME }}/product-service:${{ github.sha }} \
+                       Microservices_Project/ProductService/Product_Service
+          docker push ${{ secrets.DOCKER_USERNAME }}/product-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/product-service:${{ github.sha }}
 
       - name: Build & Push Eureka
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/eureka-server:latest Microservices_Project/SpringCloud_EurekaServer && docker push ${{ secrets.DOCKER_USERNAME }}/eureka-server:latest
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/eureka-server:latest \
+                       -t ${{ secrets.DOCKER_USERNAME }}/eureka-server:${{ github.sha }} \
+                       Microservices_Project/SpringCloud_EurekaServer
+          docker push ${{ secrets.DOCKER_USERNAME }}/eureka-server:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/eureka-server:${{ github.sha }}
 
       - name: Build & Push ConfigServer
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/config-server:latest Microservices_Project/SpringCloudConfigServer/SpringCloud_ConfigServer && docker push ${{ secrets.DOCKER_USERNAME }}/config-server:latest
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/config-server:latest \
+                       -t ${{ secrets.DOCKER_USERNAME }}/config-server:${{ github.sha }} \
+                       Microservices_Project/SpringCloudConfigServer/SpringCloud_ConfigServer
+          docker push ${{ secrets.DOCKER_USERNAME }}/config-server:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/config-server:${{ github.sha }}
 
       - name: Build & Push User_Service
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/user-service:latest Microservices_Project/UserService/User_Service && docker push ${{ secrets.DOCKER_USERNAME }}/user-service:latest
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-service:latest \
+                       -t ${{ secrets.DOCKER_USERNAME }}/user-service:${{ github.sha }} \
+                       Microservices_Project/UserService/User_Service
+          docker push ${{ secrets.DOCKER_USERNAME }}/user-service:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/user-service:${{ github.sha }}
