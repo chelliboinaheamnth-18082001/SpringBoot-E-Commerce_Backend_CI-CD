@@ -62,7 +62,7 @@ jobs:
         with:
           projectBaseDir: .
           args: >
-            -Dsonar.projectKey=chelliboinahemanth-18082001_ecommerce-backend
+            -Dsonar.projectKey=chelliboinaheamnth-18082001_SpringBoot-E-Commerce_Backend_CI-CD
             -Dsonar.organization=chelliboinaheamnth-18082001
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
         env:
