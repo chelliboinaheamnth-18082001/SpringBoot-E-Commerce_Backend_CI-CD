@@ -56,6 +56,17 @@ jobs:
             Microservices_Project/UserService/User_Service/target/site/jacoco/jacoco.xml
           fail_ci_if_error: true
 
+      # SonarQube/SonarCloud analysis
+      - name: SonarQube Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=chelliboinahemanth-18082001_ecommerce-backend
+            -Dsonar.organization=chelliboinahemanth-18082001
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
       # Build JARs for all services
       - name: Build Cart_Order_Service JAR
         run: mvn -f Microservices_Project/CartAndOrderService/Cart_Order_Service/pom.xml clean package -DskipTests
