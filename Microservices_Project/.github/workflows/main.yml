@@ -3,7 +3,7 @@ name: Build And Deploy E-Commerce Application
 on:
   push:
     branches:
-      - E-Commerce_MainBranch
+      - E-Commerce_MainBranchCI_CD
 
 jobs:
   build-deploy:
