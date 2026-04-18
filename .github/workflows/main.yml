@@ -49,12 +49,28 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }} # Add this secret in GitHub settings
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: |
             Microservices_Project/CartAndOrderService/Cart_Order_Service/target/site/jacoco/jacoco.xml
             Microservices_Project/ProductService/Product_Service/target/site/jacoco/jacoco.xml
             Microservices_Project/UserService/User_Service/target/site/jacoco/jacoco.xml
           fail_ci_if_error: true
+
+      # Build all services before SonarQube scan (to generate target/classes)
+      - name: Build Cart_Order_Service
+        run: mvn -f Microservices_Project/CartAndOrderService/Cart_Order_Service/pom.xml clean install -DskipTests
+      - name: Build ApiGateway
+        run: mvn -f Microservices_Project/E-Com_ApiGateWay/pom.xml clean install -DskipTests
+      - name: Build Notification-Service
+        run: mvn -f Microservices_Project/Notification-Service/pom.xml clean install -DskipTests
+      - name: Build Product_Service
+        run: mvn -f Microservices_Project/ProductService/Product_Service/pom.xml clean install -DskipTests
+      - name: Build EurekaServer
+        run: mvn -f Microservices_Project/SpringCloud_EurekaServer/pom.xml clean install -DskipTests
+      - name: Build ConfigServer
+        run: mvn -f Microservices_Project/SpringCloudConfigServer/SpringCloud_ConfigServer/pom.xml clean install -DskipTests
+      - name: Build User_Service
+        run: mvn -f Microservices_Project/UserService/User_Service/pom.xml clean install -DskipTests
 
       # SonarQube/SonarCloud analysis
       - name: SonarQube Scan
@@ -65,10 +81,9 @@ jobs:
             -Dsonar.projectKey=chelliboinaheamnth-18082001_SpringBoot-E-Commerce_Backend_CI-CD
             -Dsonar.organization=chelliboinaheamnth-18082001
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.java.binaries=Microservices_Project/**/target/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-
 
       # Build JARs for all services
       - name: Build Cart_Order_Service JAR
@@ -93,59 +108,38 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Build & push Docker images with latest and commit SHA tags
-      - name: Build & Push Cart_Order_Service
+      # Build & Push Docker images for each service
+      - name: Build & Push Cart_Order_Service Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/cart-order-service:latest \
-                       -t ${{ secrets.DOCKER_USERNAME }}/cart-order-service:${{ github.sha }} \
-                       Microservices_Project/CartAndOrderService/Cart_Order_Service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/cart-order-service:latest Microservices_Project/CartAndOrderService/Cart_Order_Service
           docker push ${{ secrets.DOCKER_USERNAME }}/cart-order-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/cart-order-service:${{ github.sha }}
 
-      - name: Build & Push ApiGateway
+      - name: Build & Push ApiGateway Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest \
-                       -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.sha }} \
-                       Microservices_Project/E-Com_ApiGateWay
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest Microservices_Project/E-Com_ApiGateWay
           docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:${{ github.sha }}
 
-      - name: Build & Push Notification-Service
+      - name: Build & Push Notification-Service Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service:latest \
-                       -t ${{ secrets.DOCKER_USERNAME }}/notification-service:${{ github.sha }} \
-                       Microservices_Project/Notification-Service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/notification-service:latest Microservices_Project/Notification-Service
           docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/notification-service:${{ github.sha }}
 
-      - name: Build & Push Product_Service
+      - name: Build & Push Product_Service Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/product-service:latest \
-                       -t ${{ secrets.DOCKER_USERNAME }}/product-service:${{ github.sha }} \
-                       Microservices_Project/ProductService/Product_Service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/product-service:latest Microservices_Project/ProductService/Product_Service
           docker push ${{ secrets.DOCKER_USERNAME }}/product-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/product-service:${{ github.sha }}
 
-      - name: Build & Push Eureka
+      - name: Build & Push EurekaServer Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/eureka-server:latest \
-                       -t ${{ secrets.DOCKER_USERNAME }}/eureka-server:${{ github.sha }} \
-                       Microservices_Project/SpringCloud_EurekaServer
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/eureka-server:latest Microservices_Project/SpringCloud_EurekaServer
           docker push ${{ secrets.DOCKER_USERNAME }}/eureka-server:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/eureka-server:${{ github.sha }}
 
-      - name: Build & Push ConfigServer
+      - name: Build & Push ConfigServer Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/config-server:latest \
-                       -t ${{ secrets.DOCKER_USERNAME }}/config-server:${{ github.sha }} \
-                       Microservices_Project/SpringCloudConfigServer/SpringCloud_ConfigServer
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/config-server:latest Microservices_Project/SpringCloudConfigServer/SpringCloud_ConfigServer
           docker push ${{ secrets.DOCKER_USERNAME }}/config-server:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/config-server:${{ github.sha }}
 
-      - name: Build & Push User_Service
+      - name: Build & Push User_Service Image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-service:latest \
-                       -t ${{ secrets.DOCKER_USERNAME }}/user-service:${{ github.sha }} \
-                       Microservices_Project/UserService/User_Service
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/user-service:latest Microservices_Project/UserService/User_Service
           docker push ${{ secrets.DOCKER_USERNAME }}/user-service:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/user-service:${{ github.sha }}
