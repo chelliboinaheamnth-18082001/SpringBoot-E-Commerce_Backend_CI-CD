@@ -45,6 +45,17 @@ jobs:
           name: coverage-user-service
           path: Microservices_Project/UserService/User_Service/target/site/jacoco/
 
+      # Upload coverage to Codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # Add this secret in GitHub settings
+          files: |
+            Microservices_Project/CartAndOrderService/Cart_Order_Service/target/site/jacoco/jacoco.xml
+            Microservices_Project/ProductService/Product_Service/target/site/jacoco/jacoco.xml
+            Microservices_Project/UserService/User_Service/target/site/jacoco/jacoco.xml
+          fail_ci_if_error: true
+
       # Build JARs for all services
       - name: Build Cart_Order_Service JAR
         run: mvn -f Microservices_Project/CartAndOrderService/Cart_Order_Service/pom.xml clean package -DskipTests
