@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - E-Commerce_MainBranchCI_CD
+  workflow_dispatch:   # 👈 allows manual trigger from GitHub UI
+
 
 jobs:
   build-deploy:
