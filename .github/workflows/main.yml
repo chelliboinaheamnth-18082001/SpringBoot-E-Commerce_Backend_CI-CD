@@ -65,8 +65,10 @@ jobs:
             -Dsonar.projectKey=chelliboinahemanth-18082001_ecommerce-backend
             -Dsonar.organization=chelliboinahemanth-18082001
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-      
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
 
       # Build JARs for all services
       - name: Build Cart_Order_Service JAR
