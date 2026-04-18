@@ -2,9 +2,11 @@ package com.example.user_service.User_DTOs;
 
 
 import com.example.user_service.Entites.UserRole;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class UserResponseDTO {
     private String firstName;
 

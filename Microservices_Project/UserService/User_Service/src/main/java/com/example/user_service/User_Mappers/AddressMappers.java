@@ -1,6 +1,5 @@
 package com.example.user_service.User_Mappers;
 
-
 import com.example.user_service.Entites.Address;
 import com.example.user_service.User_DTOs.AddressDTO;
 import org.springframework.stereotype.Component;
@@ -8,26 +7,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class AddressMappers {
 
-    public Address MpaAddressDtoTOAddress(AddressDTO addressDTO)
-    {
-        Address address=new Address();
-        address.setAddressLine1(addressDTO.getAddressLine1());
-        address.setCity(addressDTO.getCity());
-        address.setState(addressDTO.getState());
-        address.setCountry(addressDTO.getCountry());
-        address.setPinCode(addressDTO.getPinCode());
-        address.setAddressType(addressDTO.getAddressType());
-        return address;
+    public Address MpaAddressDtoTOAddress(AddressDTO addressDTO) {
+        return Address.builder()
+                .addressLine1(addressDTO.getAddressLine1())
+                .city(addressDTO.getCity())
+                .state(addressDTO.getState())
+                .country(addressDTO.getCountry())
+                .pinCode(addressDTO.getPinCode())
+                .addressType(addressDTO.getAddressType())
+                .build();
     }
 
     public AddressDTO MpaAddressTOAddressDto(Address address) {
-        AddressDTO addressDTO = new AddressDTO();
-        addressDTO.setAddressLine1(address.getAddressLine1());
-        addressDTO.setCity(address.getCity());
-        addressDTO.setState(address.getState());
-        addressDTO.setCountry(address.getCountry());
-        addressDTO.setPinCode(address.getPinCode());
-        addressDTO.setAddressType(address.getAddressType());
-        return addressDTO;
+        return AddressDTO.builder()
+                .addressLine1(address.getAddressLine1())
+                .city(address.getCity())
+                .state(address.getState())
+                .country(address.getCountry())
+                .pinCode(address.getPinCode())
+                .addressType(address.getAddressType())
+                .build();
     }
 }
