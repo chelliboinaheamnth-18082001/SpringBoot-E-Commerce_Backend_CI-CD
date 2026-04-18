@@ -63,7 +63,7 @@ jobs:
           projectBaseDir: .
           args: >
             -Dsonar.projectKey=chelliboinahemanth-18082001_ecommerce-backend
-            -Dsonar.organization=chelliboinahemanth-18082001
+            -Dsonar.organization=chelliboinaheamnth-18082001
             -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
